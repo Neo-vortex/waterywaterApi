@@ -1,0 +1,26 @@
+{
+	"entryFile": "src/app.ts",
+	"noImplicitAdditionalProperties": "throw-on-extras",
+	"controllerPathGlobs": ["src/domain/**/*.controller.ts"],
+	"spec": {
+		"outputDirectory": "src/build",
+		"specVersion": 3,
+		"title": "Task Manager API",
+		"version": "1.0.0",
+		"description": "Task Manager API Documentation",
+		"license": "ISC",
+		"basePath": "/",
+		"securityDefinitions": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"routes": {
+		"routesDir": "src/build",
+		"middleware": "express"
+	},
+	"ignore": ["**/node_modules/**"]
+}
