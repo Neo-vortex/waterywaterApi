@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import path from 'path';
 import { RegisterRoutes } from './build/routes';
 import { AppDataSource } from './config/orm';
+import { globalErrorMiddleware } from './middlewares/globalError.middleware';
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(
 		}
 	})
 );
+
+app.use(globalErrorMiddleware);
 
 app.listen(3000, () => {
 	console.log('Server started on http://localhost:3000/docs');

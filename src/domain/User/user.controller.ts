@@ -1,18 +1,28 @@
+import { Body, Controller, Post, Route, Response, SuccessResponse, Get, Put, Delete, Path } from 'tsoa';
+import { User } from './user.entity';
 import { UserService } from './user.service';
-import { Get, Route, Tags, Post, Put, Delete, Body, Path } from 'tsoa'; // Import tsoa decorators
-import { User } from './user.entity'; // Assume there's a `User` model
+import { NotFoundError, ValidationError } from '../../common/error/baseError';
+import { CreateUserDto } from './dto/create-user.dto';
+const userService = new UserService();
 
-const userService = new UserService(); // Dependency injection can be used here in real-world apps
+interface ValidateErrorJSON {
+	message: 'Validation failed';
+	details: { [name: string]: any };
+}
 
-@Route('users') // Base route for the controller
-@Tags('User') // Tag used for OpenAPI documentation grouping
-export class UserController {
+interface ErrorResponse {
+	message: string;
+}
+
+@Route('users')
+export class UsersController extends Controller {
 	/**
 	 * Retrieve all users
 	 */
 	@Get('/')
 	public async getAllUsers(): Promise<User[]> {
-		return await userService.getAllUsers();
+		const test = await userService.getAllUsers();
+		return test;
 	}
 
 	/**
@@ -20,20 +30,29 @@ export class UserController {
 	 * @param id User's ID
 	 */
 	@Get('/{id}')
-	public async getUserById(@Path() id: number): Promise<User | null> {
-		const user = await userService.getUserById(id);
-		if (!user) {
-			throw new Error(`User with ID ${id} not found`); // Alternatively, use custom exceptions
+	@Response<NotFoundError>(404, 'User not found')
+	@Response<ValidationError>(422, 'Validation Failed')
+	async getUserByIdHandler(@Path() id: User['id']) {
+		try {
+			const user = await userService.getUserById(id);
+
+			return user;
+		} catch (err: any) {
+			console.log(err);
+			this.setStatus(err.statusCode);
+			throw err;
 		}
-		return user;
 	}
 
 	/**
 	 * Create a new user
 	 * @param requestBody User details
 	 */
-	@Post('/')
-	public async createUser(@Body() requestBody: Partial<User>): Promise<User> {
+	@SuccessResponse('201', 'Created')
+	@Response<ValidateErrorJSON>(422, 'Validation Failed')
+	@Post()
+	public async createUser(@Body() requestBody: CreateUserDto): Promise<CreateUserDto> {
+		this.setStatus(201);
 		return await userService.createUser(requestBody);
 	}
 
@@ -43,10 +62,12 @@ export class UserController {
 	 * @param requestBody New data for the user
 	 */
 	@Put('/{id}')
+	@Response<ErrorResponse>(404, 'User not found')
 	public async updateUser(@Path() id: number, @Body() requestBody: Partial<User>): Promise<User | null> {
 		const user = await userService.updateUser(id, requestBody);
 		if (!user) {
-			throw new Error(`User with ID ${id} not found`);
+			this.setStatus(404);
+			return { message: `User with ID ${id} not found` } as any;
 		}
 		return user;
 	}
@@ -56,10 +77,15 @@ export class UserController {
 	 * @param id User's ID
 	 */
 	@Delete('/{id}')
+	@Response<ErrorResponse>(404, 'User not found')
+	@SuccessResponse(204, 'Deleted')
 	public async deleteUser(@Path() id: number): Promise<void> {
 		const success = await userService.deleteUser(id);
 		if (!success) {
-			throw new Error(`User with ID ${id} not found`);
+			this.setStatus(404);
+			return { message: `User with ID ${id} not found` } as any;
 		}
+		this.setStatus(204);
+		return;
 	}
 }
