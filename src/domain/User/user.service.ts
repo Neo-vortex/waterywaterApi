@@ -1,16 +1,18 @@
+// user.service.ts
 import { emailRegex, passwordRegex } from '../../utils/regex';
 import { NotFoundError, ValidationError } from '../../common/error/baseError';
 import { ErrorMessage } from '../../common/dictionary/error';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import bcrypt from 'bcryptjs';
 
 export class UserService {
 	async getAllUsers(): Promise<User[]> {
 		return await UserRepository.find();
 	}
 
-	async getUserById(id: number) {
+	async getUserById(id: User['id']) {
 		const user = await UserRepository.findOneBy({ id });
 
 		if (!user) throw new NotFoundError(`user with id of ${id} not found`);
@@ -18,11 +20,22 @@ export class UserService {
 		return user;
 	}
 
+	async getUserByEmail(email: string): Promise<User | null> {
+		const user = await UserRepository.findOneBy({ email });
+		return user;
+	}
+
 	async createUser(createUserDto: CreateUserDto): Promise<CreateUserDto> {
-		if (!createUserDto.email || !createUserDto.name || !createUserDto.password)
-			throw new ValidationError(ErrorMessage.requiredAllField);
-		if (!emailRegex.test(createUserDto.email)) throw new ValidationError(ErrorMessage.emailFormat);
-		if (!passwordRegex.test(createUserDto.password)) throw new ValidationError(ErrorMessage.passwordFormat);
+		const findUser = await UserRepository.findOneBy({
+			email: createUserDto.email
+		});
+
+		if (findUser) throw new ValidationError(ErrorMessage.existUser);
+
+		const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+		createUserDto.password = hashedPassword;
+
 		const user = UserRepository.create(createUserDto);
 		return await UserRepository.save(user);
 	}
