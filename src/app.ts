@@ -4,6 +4,7 @@ import path from 'path';
 import { RegisterRoutes } from './build/routes';
 import { AppDataSource } from './config/orm';
 import { globalErrorMiddleware } from './middlewares/globalError.middleware';
+import { validationErrorMiddleware } from './middlewares/validation.middleware';
 
 const app = express();
 
@@ -19,6 +20,8 @@ try {
 } catch (err) {
 	console.error('Error registering routes:', err);
 }
+
+app.use(validationErrorMiddleware);
 
 // Swagger UI
 app.use(
