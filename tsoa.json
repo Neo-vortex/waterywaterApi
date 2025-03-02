@@ -22,5 +22,10 @@
 		"routesDir": "src/build",
 		"middleware": "express"
 	},
+	"validationOptions": {
+		"validateRequest": {
+			"coerceTypes": true
+		}
+	},
 	"ignore": ["**/node_modules/**"]
 }
