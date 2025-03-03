@@ -1,7 +1,12 @@
 import { Response, Request, NextFunction } from 'express';
 import { ValidateError } from 'tsoa';
 
-export function validationErrorMiddleware(err: unknown, req: Request, res: Response, next: NextFunction) {
+export function validationErrorMiddleware(
+	err: unknown,
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
 	if (err instanceof ValidateError) {
 		console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
 		res.status(400).json({

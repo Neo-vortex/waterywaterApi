@@ -14,7 +14,7 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { NotFoundError, ValidationError } from '../../common/error/baseError';
 import { CreateUserDto } from './dto/create-user.dto';
-import { emailRegex, passwordRegex } from '../../utils/regex';
+import { emailRegex } from '../../utils/regex';
 import { ErrorMessage } from '../../common/dictionary/error';
 import bcrypt from 'bcryptjs';
 
@@ -36,8 +36,7 @@ export class UsersController extends Controller {
 	 */
 	@Get('/')
 	public async getAllUsers(): Promise<User[]> {
-		const test = await userService.getAllUsers();
-		return test;
+		return await userService.getAllUsers();
 	}
 
 	/**
