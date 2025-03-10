@@ -1,43 +1,63 @@
-import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import path from 'path';
 import { RegisterRoutes } from './build/routes';
-import { AppDataSource } from './config/orm';
+import express, { Express } from 'express';
+import dotenv from 'dotenv';
+import 'reflect-metadata';
+import { AppDataSource, setupMiddleware } from './config';
+import logger from './common/logger/logger';
 import { globalErrorMiddleware } from './middlewares/globalError.middleware';
 import { validationErrorMiddleware } from './middlewares/validation.middleware';
 
-const app = express();
+dotenv.config();
 
-app.use(express.json());
+const app: Express = express();
+const port = process.env.PORT || 3000;
 
-AppDataSource.initialize();
-// Serve swagger.json
-app.use('/build', express.static(path.join(__dirname, 'build')));
+const initializeApp = async () => {
+	try {
+		// Setup middleware
+		setupMiddleware(app);
 
-// Register TSOA routes
-try {
-	RegisterRoutes(app);
-} catch (err) {
-	console.error('Error registering routes:', err);
-}
+		// Initialize database connection
+		await AppDataSource.initialize();
+		logger.info('Database connected successfully');
 
-app.use(validationErrorMiddleware);
+		// Register routes
+		RegisterRoutes(app);
 
-// Swagger UI
-app.use(
-	'/docs',
-	swaggerUi.serve,
-	swaggerUi.setup(undefined, {
-		swaggerOptions: {
-			url: '/build/swagger.json' // Serve file via static route
-		}
-	})
-);
+		// Validation middleware(interceptor)
+		app.use(validationErrorMiddleware);
 
-app.use(globalErrorMiddleware);
+		// Global error middleware(interceptor)
+		app.use(globalErrorMiddleware);
 
-app.listen(3000, () => {
-	console.log('Server started on http://localhost:3000/docs');
+		// Start server
+		app.listen(port, () => {
+			logger.info(`Server is running on port ${port}`);
+			logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+			logger.info(
+				`Swagger documentation available at http://localhost:${port}/docs`
+			);
+		});
+	} catch (error) {
+		logger.error('Error during initialization:', error);
+		console.error(error);
+		process.exit(1);
+	}
+};
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (error: Error) => {
+	logger.error('Unhandled Rejection:', error);
+	process.exit(1);
 });
 
-export default app;
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+	logger.error('Uncaught Exception:', error);
+	process.exit(1);
+});
+
+initializeApp().catch((error) => {
+	logger.error('Failed to start application:', error);
+	process.exit(1);
+});

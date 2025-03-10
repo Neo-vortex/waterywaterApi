@@ -13,10 +13,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"name": {
-						"type": "string"
-					},
-					"email": {
+					"username": {
 						"type": "string"
 					},
 					"password": {
@@ -33,11 +30,27 @@
 				},
 				"required": [
 					"id",
-					"name",
-					"email",
+					"username",
 					"password",
 					"createdAt",
 					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthenticationError": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"statusCode": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"message",
+					"statusCode"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -78,10 +91,7 @@
 			},
 			"CreateUserDto": {
 				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"email": {
+					"username": {
 						"type": "string"
 					},
 					"password": {
@@ -89,73 +99,28 @@
 					}
 				},
 				"required": [
-					"name",
-					"email",
+					"username",
 					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ValidateErrorJSON": {
+			"ExistedError": {
 				"properties": {
 					"message": {
-						"type": "string",
-						"enum": [
-							"Validation failed"
-						],
-						"nullable": false
+						"type": "string"
 					},
-					"details": {
-						"properties": {},
-						"additionalProperties": {},
-						"type": "object"
+					"statusCode": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"message",
-					"details"
+					"statusCode"
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"ErrorResponse": {
-				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Partial_User_": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
 			}
 		},
 		"securitySchemes": {
@@ -173,12 +138,15 @@
 		"license": {
 			"name": "ISC"
 		},
-		"contact": {}
+		"contact": {
+			"name": "farnam faryar",
+			"email": "farnam.faryar@gmail.com"
+		}
 	},
 	"paths": {
 		"/users": {
 			"get": {
-				"operationId": "GetAllUsers",
+				"operationId": "GetUsersHandler",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -192,54 +160,30 @@
 								}
 							}
 						}
-					}
-				},
-				"description": "Retrieve all users",
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateUser",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CreateUserDto"
-								}
-							}
-						}
 					},
-					"422": {
-						"description": "Validation Failed",
+					"401": {
+						"description": "Authentication Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ValidateErrorJSON"
+									"$ref": "#/components/schemas/AuthenticationError"
 								}
 							}
 						}
 					}
 				},
-				"description": "Create a new user",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"description": "User details",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateUserDto",
-								"description": "User details"
-							}
-						}
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
 					}
-				}
+				],
+				"parameters": []
 			}
 		},
-		"/users/{id}": {
+		"/users/{userId}": {
 			"get": {
 				"operationId": "GetUserByIdHandler",
 				"responses": {
@@ -248,7 +192,40 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/User"
+									"properties": {
+										"username": {
+											"type": "string"
+										},
+										"id": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"username",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidationError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Authentication Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthenticationError"
 								}
 							}
 						}
@@ -262,113 +239,20 @@
 								}
 							}
 						}
-					},
-					"422": {
-						"description": "Validation Failed",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ValidationError"
-								}
-							}
-						}
 					}
 				},
-				"description": "Retrieve a user by ID",
-				"security": [],
-				"parameters": [
+				"tags": [
+					"Users"
+				],
+				"security": [
 					{
-						"description": "User's ID",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/User"
-										}
-									],
-									"nullable": true
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "User not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update an existing user by ID",
-				"security": [],
-				"parameters": [
-					{
-						"description": "User's ID",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"jwt": []
 					}
 				],
-				"requestBody": {
-					"description": "New data for the user",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_User_",
-								"description": "New data for the user"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteUser",
-				"responses": {
-					"204": {
-						"description": "Deleted"
-					},
-					"404": {
-						"description": "User not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete a user by ID",
-				"security": [],
 				"parameters": [
 					{
-						"description": "User's ID",
 						"in": "path",
-						"name": "id",
+						"name": "userId",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -378,40 +262,20 @@
 				]
 			}
 		},
-		"/users/login": {
+		"/auth/login": {
 			"post": {
-				"operationId": "Login",
+				"operationId": "LoginHandler",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"properties": {
-										"token": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"token"
-									],
-									"type": "object"
-								}
+								"schema": {}
 							}
 						}
 					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Failed",
+					"400": {
+						"description": "Validation Error",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -419,31 +283,69 @@
 								}
 							}
 						}
+					},
+					"404": {
+						"description": "User Not Found Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundError"
+								}
+							}
+						}
 					}
 				},
-				"description": "Log in an existing user",
+				"tags": [
+					"Authentication"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"description": "User credentials",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"password": {
-										"type": "string"
-									},
-									"email": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"password",
-									"email"
-								],
-								"type": "object",
-								"description": "User credentials"
+								"$ref": "#/components/schemas/CreateUserDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "RegisterHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Existed User Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExistedError"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserDto"
 							}
 						}
 					}

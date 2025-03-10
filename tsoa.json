@@ -1,10 +1,14 @@
 {
 	"entryFile": "src/app.ts",
 	"noImplicitAdditionalProperties": "throw-on-extras",
-	"controllerPathGlobs": ["src/domain/**/*.controller.ts"],
+	"controllerPathGlobs": ["src/**/*controller.ts"],
 	"spec": {
 		"outputDirectory": "src/build",
 		"specVersion": 3,
+		"contact": {
+			"name": "farnam faryar",
+			"email": "farnam.faryar@gmail.com"
+		},
 		"title": "Task Manager API",
 		"version": "1.0.0",
 		"description": "Task Manager API Documentation",
@@ -20,12 +24,8 @@
 	},
 	"routes": {
 		"routesDir": "src/build",
-		"middleware": "express"
-	},
-	"validationOptions": {
-		"validateRequest": {
-			"coerceTypes": true
-		}
+		"middleware": "express",
+		"authenticationModule": "./src/middlewares/authentication.middleware.ts"
 	},
 	"ignore": ["**/node_modules/**"]
 }

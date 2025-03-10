@@ -1,21 +1,19 @@
 import {
-	Entity,
-	PrimaryGeneratedColumn,
 	Column,
 	CreateDateColumn,
+	DeleteDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from 'typeorm';
 
-@Entity('users')
+@Entity()
 export class User {
 	@PrimaryGeneratedColumn('increment')
 	id: number;
 
-	@Column()
-	name: string;
-
 	@Column({ unique: true })
-	email: string;
+	username: string;
 
 	@Column()
 	password: string;
