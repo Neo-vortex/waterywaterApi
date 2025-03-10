@@ -12,7 +12,6 @@ import jwt from 'jsonwebtoken';
 dotenv.config();
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || '';
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || '';
 
 export const register = async (createUserDto: CreateUserDto) => {
 	const { username, password } = createUserDto;
@@ -35,7 +34,6 @@ export const register = async (createUserDto: CreateUserDto) => {
 export const login = async (createUserDto: CreateUserDto) => {
 	const { username, password } = createUserDto;
 	const user = await UserRepository.findByUsername(username);
-
 	if (!user) {
 		throw new NotFoundError(`${username} does not exist`);
 	}

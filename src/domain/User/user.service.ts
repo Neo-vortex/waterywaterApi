@@ -19,3 +19,13 @@ export const getUserById = async (id: User['id']) => {
 
 	return { id: user.id, username: user.username };
 };
+
+export const deleteUser = async (id: User['id']) => {
+	if (!id) throw new ValidationError('property "id" is missing');
+
+	const user = await UserRepository.findOneBy({ id });
+	if (!user) throw new NotFoundError(`user with id of ${id} not found`);
+
+	await UserRepository.remove(user);
+	return { message: 'User deleted successfully' };
+};

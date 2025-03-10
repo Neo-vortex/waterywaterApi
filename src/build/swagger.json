@@ -38,23 +38,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthenticationError": {
-				"properties": {
-					"message": {
-						"type": "string"
-					},
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"message",
-					"statusCode"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"NotFoundError": {
 				"properties": {
 					"message": {
@@ -160,16 +143,6 @@
 								}
 							}
 						}
-					},
-					"401": {
-						"description": "Authentication Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AuthenticationError"
-								}
-							}
-						}
 					}
 				},
 				"tags": [
@@ -209,33 +182,45 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ValidationError"
-								}
-							}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
-					},
-					"401": {
-						"description": "Authentication Error",
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AuthenticationError"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "User not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/NotFoundError"
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
 								}
 							}
 						}
