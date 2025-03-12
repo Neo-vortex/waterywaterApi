@@ -7,6 +7,95 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"VaseResponseDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					},
+					"height": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"color",
+					"height",
+					"userId",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateVaseDto": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					},
+					"height": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"color",
+					"height",
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateVaseDto": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					},
+					"height": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"User": {
 				"properties": {
 					"id": {
@@ -18,6 +107,12 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"vases": {
+						"items": {
+							"$ref": "#/components/schemas/Vase"
+						},
+						"type": "array"
 					},
 					"createdAt": {
 						"type": "string",
@@ -32,6 +127,53 @@
 					"id",
 					"username",
 					"password",
+					"vases",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Vase": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					},
+					"height": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"color",
+					"height",
+					"userId",
+					"user",
 					"createdAt",
 					"updatedAt"
 				],
@@ -127,6 +269,185 @@
 		}
 	},
 	"paths": {
+		"/vases": {
+			"get": {
+				"operationId": "GetVasesHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/VaseResponseDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vases"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateVaseHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/VaseResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vases"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateVaseDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/vases/{vaseId}": {
+			"get": {
+				"operationId": "GetVaseByIdHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/VaseResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vases"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "vaseId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateVaseHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/VaseResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vases"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "vaseId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateVaseDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/vases/user/{userId}": {
+			"get": {
+				"operationId": "GetVasesByUserIdHandler",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/VaseResponseDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vases"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/users": {
 			"get": {
 				"operationId": "GetUsersHandler",

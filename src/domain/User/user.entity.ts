@@ -3,9 +3,11 @@ import {
 	CreateDateColumn,
 	DeleteDateColumn,
 	Entity,
+	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from 'typeorm';
+import { Vase } from '../Vase/vase.entity';
 
 @Entity()
 export class User {
@@ -17,6 +19,9 @@ export class User {
 
 	@Column()
 	password: string;
+
+	@OneToMany(() => Vase, (vase) => vase.user)
+	vases: Vase[];
 
 	@CreateDateColumn()
 	createdAt: Date;

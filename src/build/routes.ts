@@ -4,6 +4,8 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { VaseController } from './../domain/Vase/vase.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../domain/User/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../domain/User/auth.controller';
@@ -17,12 +19,67 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "VaseResponseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"string"},
+            "color": {"dataType":"string","required":true},
+            "height": {"dataType":"double","required":true},
+            "userId": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateVaseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"string"},
+            "color": {"dataType":"string","required":true},
+            "height": {"dataType":"double","required":true},
+            "userId": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateVaseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string"},
+            "description": {"dataType":"string"},
+            "color": {"dataType":"string"},
+            "height": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"double","required":true},
             "username": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
+            "vases": {"dataType":"array","array":{"dataType":"refObject","ref":"Vase"},"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Vase": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"string"},
+            "color": {"dataType":"string","required":true},
+            "height": {"dataType":"double","required":true},
+            "userId": {"dataType":"string","required":true},
+            "user": {"ref":"User","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
@@ -82,6 +139,161 @@ export function RegisterRoutes(app: Router) {
 
 
     
+        const argsVaseController_getVasesHandler: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/vases',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VaseController)),
+            ...(fetchMiddlewares<RequestHandler>(VaseController.prototype.getVasesHandler)),
+
+            async function VaseController_getVasesHandler(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVaseController_getVasesHandler, request, response });
+
+                const controller = new VaseController();
+
+              await templateService.apiHandler({
+                methodName: 'getVasesHandler',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsVaseController_getVaseByIdHandler: Record<string, TsoaRoute.ParameterSchema> = {
+                vaseId: {"in":"path","name":"vaseId","required":true,"dataType":"string"},
+        };
+        app.get('/vases/:vaseId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VaseController)),
+            ...(fetchMiddlewares<RequestHandler>(VaseController.prototype.getVaseByIdHandler)),
+
+            async function VaseController_getVaseByIdHandler(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVaseController_getVaseByIdHandler, request, response });
+
+                const controller = new VaseController();
+
+              await templateService.apiHandler({
+                methodName: 'getVaseByIdHandler',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsVaseController_getVasesByUserIdHandler: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+        };
+        app.get('/vases/user/:userId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VaseController)),
+            ...(fetchMiddlewares<RequestHandler>(VaseController.prototype.getVasesByUserIdHandler)),
+
+            async function VaseController_getVasesByUserIdHandler(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVaseController_getVasesByUserIdHandler, request, response });
+
+                const controller = new VaseController();
+
+              await templateService.apiHandler({
+                methodName: 'getVasesByUserIdHandler',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsVaseController_createVaseHandler: Record<string, TsoaRoute.ParameterSchema> = {
+                data: {"in":"body","name":"data","required":true,"ref":"CreateVaseDto"},
+        };
+        app.post('/vases',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VaseController)),
+            ...(fetchMiddlewares<RequestHandler>(VaseController.prototype.createVaseHandler)),
+
+            async function VaseController_createVaseHandler(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVaseController_createVaseHandler, request, response });
+
+                const controller = new VaseController();
+
+              await templateService.apiHandler({
+                methodName: 'createVaseHandler',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsVaseController_updateVaseHandler: Record<string, TsoaRoute.ParameterSchema> = {
+                vaseId: {"in":"path","name":"vaseId","required":true,"dataType":"string"},
+                data: {"in":"body","name":"data","required":true,"ref":"UpdateVaseDto"},
+        };
+        app.put('/vases/:vaseId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VaseController)),
+            ...(fetchMiddlewares<RequestHandler>(VaseController.prototype.updateVaseHandler)),
+
+            async function VaseController_updateVaseHandler(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVaseController_updateVaseHandler, request, response });
+
+                const controller = new VaseController();
+
+              await templateService.apiHandler({
+                methodName: 'updateVaseHandler',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_getUsersHandler: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/users',
